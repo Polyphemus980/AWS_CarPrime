@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarPrime.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250520193912_FixForeignKeyDeleteBehavior")]
+    [Migration("20250520194940_FixForeignKeyDeleteBehavior")]
     partial class FixForeignKeyDeleteBehavior
     {
         /// <inheritdoc />

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarPrime.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class FixForeignKeyDeleteBehavior : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,6 +49,7 @@ namespace CarPrime.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LicenceIssuedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -81,7 +82,8 @@ namespace CarPrime.Migrations
                     CarId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ModelId = table.Column<int>(type: "int", nullable: false),
-                    ManufactureYear = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ManufactureYear = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -101,8 +103,7 @@ namespace CarPrime.Migrations
                     LeaseId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,8 +112,7 @@ namespace CarPrime.Migrations
                         name: "FK_LeaseReturns_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "EmployeeId");
                 });
 
             migrationBuilder.CreateTable(
@@ -125,6 +125,7 @@ namespace CarPrime.Migrations
                     CarId = table.Column<int>(type: "int", nullable: false),
                     CompanyId = table.Column<int>(type: "int", nullable: false),
                     InsurancePrize = table.Column<decimal>(type: "money", nullable: false),
+                    RentPrize = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -135,20 +136,36 @@ namespace CarPrime.Migrations
                         name: "FK_Offers_Cars_CarId",
                         column: x => x.CarId,
                         principalTable: "Cars",
-                        principalColumn: "CarId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CarId");
                     table.ForeignKey(
                         name: "FK_Offers_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
-                        principalColumn: "CompanyId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CompanyId");
                     table.ForeignKey(
                         name: "FK_Offers_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CustomerId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LeaseReturnPhotos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LeaseReturnId = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LeaseReturnPhotos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LeaseReturnPhotos_LeaseReturns_LeaseReturnId",
+                        column: x => x.LeaseReturnId,
+                        principalTable: "LeaseReturns",
+                        principalColumn: "LeaseId");
                 });
 
             migrationBuilder.CreateTable(
@@ -157,10 +174,11 @@ namespace CarPrime.Migrations
                 {
                     LeaseId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OfferId = table.Column<int>(type: "int", nullable: true),
+                    OfferId = table.Column<int>(type: "int", nullable: false),
                     LeaserId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    EndedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -169,19 +187,23 @@ namespace CarPrime.Migrations
                         name: "FK_Leases_Customers_LeaserId",
                         column: x => x.LeaserId,
                         principalTable: "Customers",
-                        principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CustomerId");
                     table.ForeignKey(
                         name: "FK_Leases_Offers_OfferId",
                         column: x => x.OfferId,
                         principalTable: "Offers",
-                        principalColumn: "OfferId",onDelete: ReferentialAction.NoAction);
+                        principalColumn: "OfferId");
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cars_ModelId",
                 table: "Cars",
                 column: "ModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LeaseReturnPhotos_LeaseReturnId",
+                table: "LeaseReturnPhotos",
+                column: "LeaseReturnId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LeaseReturns_EmployeeId",
@@ -196,7 +218,8 @@ namespace CarPrime.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Leases_OfferId",
                 table: "Leases",
-                column: "OfferId");
+                column: "OfferId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Offers_CarId",
@@ -219,16 +242,19 @@ namespace CarPrime.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "LeaseReturns");
+                name: "LeaseReturnPhotos");
 
             migrationBuilder.DropTable(
                 name: "Leases");
 
             migrationBuilder.DropTable(
-                name: "Employees");
+                name: "LeaseReturns");
 
             migrationBuilder.DropTable(
                 name: "Offers");
+
+            migrationBuilder.DropTable(
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Cars");
