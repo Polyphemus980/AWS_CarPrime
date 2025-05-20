@@ -34,7 +34,6 @@ public class CompanyController(
     }
     
     [HttpGet("/Company/{companyId:int}/Car/{carId:int}/offer")]
-    [Authorize]
     public async Task<IActionResult> RequestOffer(int companyId, int carId)
     {
         var company = companiesService[companyId];
@@ -46,7 +45,6 @@ public class CompanyController(
     }
 
     [HttpGet("/Company/{companyId:int}/Offer/{offerId:int}")]
-    [Authorize]
     public async Task<IActionResult> GetOffer(int companyId, int offerId)
     {
         var company = companiesService[companyId];
@@ -58,7 +56,6 @@ public class CompanyController(
     }
 
     [HttpPost("/Company/{companyId:int}/Offer/{offerId:int}/accept")]
-    [Authorize]
     public async Task<IActionResult> AcceptOffer(int companyId, int offerId)
     {
         var company = companiesService[companyId];
@@ -70,7 +67,6 @@ public class CompanyController(
     }
 
     [HttpGet("/Company/{companyId:int}/Lease/{leaseId:int}")]
-    [Authorize]
     public async Task<IActionResult> GetLease(int companyId, int leaseId)
     {
         var company = companiesService[companyId];
@@ -82,7 +78,6 @@ public class CompanyController(
     }
 
     [HttpDelete("/Company/{companyId:int}/Lease/{leaseId:int}")]
-    [Authorize]
     public async Task<IActionResult> RequestEndLease(int companyId, int leaseId)
     {
         var company = companiesService[companyId];

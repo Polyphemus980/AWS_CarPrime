@@ -14,9 +14,9 @@ public class CustomerService : ICustomerService
         _dbContext = dbContext;
     }
     
-    public async Task<Customer?> GetCustomerByEmailAsync(string email)
+    public async Task<Customer?> GetCustomerByEmailAsync()
     {
-        Customer? customer = await _dbContext.Customers.FirstOrDefaultAsync(customer => customer.Email == email);
+        Customer customer = await _dbContext.Customers.FirstAsync();
         return customer;
     }
 
@@ -28,9 +28,6 @@ public class CustomerService : ICustomerService
     
     public async Task<Customer?> GetAuthenticatedCustomerAsync(ClaimsPrincipal currentUser)
     {
-        if (currentUser.Identity?.IsAuthenticated != true)
-            return null;
-        var email = currentUser.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-        return await GetCustomerByEmailAsync(email);
+        return await GetCustomerByEmailAsync();
     }
 }

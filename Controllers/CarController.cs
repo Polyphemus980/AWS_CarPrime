@@ -60,7 +60,6 @@ public class CarController : ControllerBase
     
     
     [HttpPost("/Car/{id:Int}/rent")]
-    [Authorize]
     public async Task<IActionResult> RentCar([FromRoute] int id)
     {
         var customer = await _customerService.GetAuthenticatedCustomerAsync(User);
@@ -97,7 +96,6 @@ public class CarController : ControllerBase
 
    
     [HttpGet("/Car/{id:int}/offer")]
-    [Authorize]
     public async Task<IActionResult> RequestOffer([FromRoute] int id)
     {
 
@@ -127,7 +125,6 @@ public class CarController : ControllerBase
     }
 
     [HttpGet("/Car/rented")]
-    [Authorize]
     public async Task<IActionResult> GetRentedCarsByCustomerId()
     {
         var customer = await _customerService.GetAuthenticatedCustomerAsync(User);

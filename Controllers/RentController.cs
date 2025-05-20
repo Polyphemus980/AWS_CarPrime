@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarPrime.Controllers;
 
-[Authorize]
 public class RentController(
     ApplicationDbContext context,
     IRentalService rentalService,

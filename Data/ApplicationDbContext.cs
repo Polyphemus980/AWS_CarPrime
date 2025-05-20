@@ -20,6 +20,18 @@ public class ApplicationDbContext: DbContext
     
     public async Task SeedDb()
     {
+        var customer = new Customer
+        {
+            Address = "Address",
+            Email = "customer@customer.com",
+            FirstName = "Cust",
+            LastName = "Omer",
+            Birthdate = DateTime.Now,
+            City = "England",
+            Country = "Warsaw",
+            CreatedAt = DateTime.Now,
+        };
+        await Customers.AddAsync(customer);
         if (!CarModels.Any())
         {
             var carModels = new List<CarModel>

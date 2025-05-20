@@ -1,10 +1,7 @@
-using System.Text;
-using CarPrime.Configurations;
+
 using CarPrime.Data;
 using CarPrime.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -22,9 +19,9 @@ builder.Services.AddCors(options =>
 });
 
 //Database config
-var connectionString = Environment.GetEnvironmentVariable("SQLAZURECONNSTR_AZURE_SQL_CONNECTIONSTRING") 
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") 
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseAzureSql(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 //CustomerService
 builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -37,34 +34,19 @@ builder.Services.AddScoped<CompaniesService, CompaniesService>();
 builder.Services.AddScoped<CarPrimeService, CarPrimeService>();
 
 //Google authentication config
-var secretKey = builder.Configuration["Jwt:SecretKey"];
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["Jwt:MyDomainUrl"],  
-        ValidateAudience = false,
-        //TODO: Validate audience once front-end is deployed
-        //ValidateAudience = true, 
-        //ValidAudience = configuration[front-end-url],   
-        ValidateLifetime = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
-    };
-});
 var app = builder.Build();
 
 // CORS should be applied before MapControllers and UseAuthentication and Swagger ig
 app.UseCors("AllowAll");
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI();
+
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await db.Database.MigrateAsync(); 
+    await db.SeedDb();
 }
 
 app.UseHttpsRedirection();

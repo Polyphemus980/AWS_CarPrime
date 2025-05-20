@@ -33,7 +33,7 @@ public class AuthController : ControllerBase
                 new GoogleJsonWebSignature.ValidationSettings { Audience = new[] { $"{_configuration["Google:ClientId"]}" } });
             var email = payload.Email;
             
-            var customer = await _customerService.GetCustomerByEmailAsync(email);
+            var customer = await _customerService.GetCustomerByEmailAsync();
             if (customer == null)
             {
                 return Ok(new { requiresAdditionalInfo = true, email = payload.Email });
@@ -70,12 +70,6 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromForm] CustomerRegistrationRequest customerData)
     {
-        var customer = await _customerService.GetCustomerByEmailAsync(customerData.Email);
-        if (customer != null)
-        {
-            return Ok();
-        }
-
         Customer newCustomer = new Customer
         {
             FirstName = customerData.FirstName,
