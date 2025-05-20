@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPrime", "CarPrime\CarPrime.csproj", "{B1973CA8-BEB0-4C7E-BD06-AE55384567AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPrime", ".\CarPrime.csproj", "{B1973CA8-BEB0-4C7E-BD06-AE55384567AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
