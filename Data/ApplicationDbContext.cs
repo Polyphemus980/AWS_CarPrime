@@ -72,6 +72,60 @@ public class ApplicationDbContext: DbContext
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<Lease>().HasOne(l => l.Offer).WithOne().OnDelete(DeleteBehavior.NoAction);
+        base.OnModelCreating(builder);
+
+        builder.Entity<Lease>(entity =>
+        {
+            entity.HasOne(l => l.Leaser)
+                .WithMany(c => c.Leases)
+                .HasForeignKey("LeaserId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+
+            entity.HasOne(l => l.Offer)
+                .WithOne()
+                .HasForeignKey<Lease>("OfferId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+        });
+
+        builder.Entity<LeaseReturn>(entity =>
+        {
+            entity.HasOne(lr => lr.Employee)
+                .WithMany(e => e.LeaseReturns)
+                .HasForeignKey("EmployeeId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+        });
+
+        builder.Entity<LeaseReturnPhoto>(entity =>
+        {
+            entity.HasOne(p => p.LeaseReturn)
+                .WithMany(lr => lr.Photos)
+                .HasForeignKey("LeaseReturnId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+        });
+
+        builder.Entity<Offer>(entity =>
+        {
+            entity.HasOne(o => o.Car)
+                .WithOne(c => c.Offer)
+                .HasForeignKey<Offer>("CarId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+
+            entity.HasOne(o => o.Company)
+                .WithMany()
+                .HasForeignKey("CompanyId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+
+            entity.HasOne(o => o.Customer)
+                .WithMany(c => c.Offers)
+                .HasForeignKey("CustomerId")
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired();
+        });
     }
 }
