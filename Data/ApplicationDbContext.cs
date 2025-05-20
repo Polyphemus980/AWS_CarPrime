@@ -69,4 +69,9 @@ public class ApplicationDbContext: DbContext
 
         await SaveChangesAsync();
     }
+    
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity<Lease>().HasOne(l => l.Offer).WithOne().OnDelete(DeleteBehavior.NoAction);
+    }
 }
