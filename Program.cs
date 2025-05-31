@@ -32,7 +32,7 @@ builder.Services.AddScoped<IRentalService, RentalService>();
 //CompaniesService
 builder.Services.AddScoped<CompaniesService, CompaniesService>();
 builder.Services.AddScoped<CarPrimeService, CarPrimeService>();
-
+builder.Services.AddHealthChecks();
 //Google authentication config
 var app = builder.Build();
 
