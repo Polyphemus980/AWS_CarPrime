@@ -38,6 +38,7 @@ var app = builder.Build();
 
 // CORS should be applied before MapControllers and UseAuthentication and Swagger ig
 app.UseCors("AllowAll");
+app.MapHealthChecks("/health");
 
 app.UseSwagger();
 app.UseSwaggerUI();
