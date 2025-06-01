@@ -82,7 +82,7 @@ public class RentController(
         }
 
         lease.Status = LeaseStatus.Finished;
-        lease.EndedAt = DateTime.Now;
+        lease.EndedAt = DateTime.UtcNow;
         var leaseReturn = new LeaseReturn
         {
             LeaseId = lease.LeaseId,

@@ -26,7 +26,7 @@ public class RentalService(ApplicationDbContext context) : IRentalService
             Customer = customer,
             Car = car,
             Company = company,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
         };
         await context.Offers.AddAsync(offer);
         await context.SaveChangesAsync();
@@ -50,7 +50,7 @@ public class RentalService(ApplicationDbContext context) : IRentalService
         {
             Offer = offer,
             Leaser = offer.Customer,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
         };
         await context.Leases.AddAsync(lease);
         await context.SaveChangesAsync();
@@ -59,12 +59,12 @@ public class RentalService(ApplicationDbContext context) : IRentalService
 
     public async Task EndLease(Lease lease)
     {
-        lease.EndedAt = DateTime.Now;
+        lease.EndedAt = DateTime.UtcNow;
         lease.Offer.IsDeleted = true;
         await context.SaveChangesAsync();
     }
     
     public static readonly TimeSpan OfferExpirationTime = TimeSpan.FromMinutes(10);
     
-    public static bool IsExpired(Offer offer) => offer.IsDeleted || DateTime.Now - offer.CreatedAt > OfferExpirationTime; 
+    public static bool IsExpired(Offer offer) => offer.IsDeleted || DateTime.UtcNow - offer.CreatedAt > OfferExpirationTime; 
 }

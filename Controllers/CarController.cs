@@ -85,7 +85,7 @@ public class CarController : ControllerBase
         {
             Offer = offer,
             Leaser = customer,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
         };
         await _context.Leases.AddAsync(lease);
         
