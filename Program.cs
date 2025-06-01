@@ -21,7 +21,7 @@ builder.Services.AddCors(options =>
 //Database config
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") 
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 //CustomerService
 builder.Services.AddScoped<ICustomerService, CustomerService>();
